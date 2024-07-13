@@ -8,14 +8,18 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Hello World!")
-		d, _ := io.ReadAll(r.Body)
+		d, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "Oops", http.StatusBadRequest)
+			return
+		}
 
-		fmt.Fprintf(rw, "Hello %s", d)
+		fmt.Fprintf(w, "Hello %s", d)
 	})
 
-	http.HandleFunc("/goodbye", func(rw http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/goodbye", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Goodbye World!")
 	})
 
