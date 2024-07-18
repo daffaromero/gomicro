@@ -43,6 +43,7 @@ type ValidationError struct {
 // this is a valid number
 func getProductID(r *http.Request) int {
 	vars := mux.Vars(r)
+	println(vars["id"])
 
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {

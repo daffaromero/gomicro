@@ -15,8 +15,13 @@ import (
 
 // Create handles POST requests to add new products
 func (p *Products) Create(w http.ResponseWriter, r *http.Request) {
-	prod := r.Context().Value(KeyProduct{}).(data.Product)
+	prod := r.Context().Value(KeyProduct{}).(*data.Product)
 
-	p.l.Printf("[DEBUG] Inserting product: %v\n", prod)
+	p.l.Printf("[DEBUG] Inserting product: %v\n", &prod)
 	data.AddProduct(prod)
+
+	err := data.ToJSON(prod, w)
+	if err != nil {
+		p.l.Println("[ERROR] serializing product", err)
+	}
 }

@@ -39,21 +39,27 @@ func (p *Products) ListSingle(w http.ResponseWriter, r *http.Request) {
 
 	prod, err := data.GetProductByID(id)
 
-	switch err {
-	case nil:
-
-	case data.ErrProductNotFound:
+	if err == data.ErrProductNotFound {
 		p.l.Println("[ERROR] fetching product", err)
 
 		w.WriteHeader(http.StatusNotFound)
 		data.ToJSON(&GenericError{Message: err.Error()}, w)
 		return
 
-	default:
+	} else if err != nil {
 		p.l.Println("[ERROR] fetching product", err)
 
 		w.WriteHeader(http.StatusInternalServerError)
 		data.ToJSON(&GenericError{Message: err.Error()}, w)
+		return
+
+	}
+
+	if prod == nil {
+		p.l.Println("[ERROR] fetching product", err)
+
+		w.WriteHeader(http.StatusNotFound)
+		data.ToJSON(&GenericError{Message: "Product not found in database"}, w)
 		return
 	}
 

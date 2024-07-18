@@ -54,7 +54,7 @@ func GetProducts() Products {
 // If a product is not found this function returns a ProductNotFound error
 func GetProductByID(id int) (*Product, error) {
 	i := findIndexByProductID(id)
-	if id == -1 {
+	if i == -1 {
 		return nil, ErrProductNotFound
 	}
 
@@ -65,24 +65,26 @@ func GetProductByID(id int) (*Product, error) {
 // item.
 // If a product with the given id does not exist in the database
 // this function returns a ProductNotFound error
-func UpdateProduct(p Product) error {
-	i := findIndexByProductID(p.ID)
+func UpdateProduct(p *Product, id int) error {
+	i := findIndexByProductID(id)
+
 	if i == -1 {
 		return ErrProductNotFound
 	}
 
 	// update the product in the DB
-	productList[i] = &p
+	p.ID = id
+	productList[i] = p
 
 	return nil
 }
 
 // AddProduct adds a new product to the database
-func AddProduct(p Product) {
+func AddProduct(p *Product) {
 	// get the next id in sequence
 	maxID := productList[len(productList)-1].ID
 	p.ID = maxID + 1
-	productList = append(productList, &p)
+	productList = append(productList, p)
 }
 
 // DeleteProduct deletes a product from the database
@@ -92,7 +94,7 @@ func DeleteProduct(id int) error {
 		return ErrProductNotFound
 	}
 
-	productList = append(productList[:i], productList[i+1])
+	productList = append(productList[:i], productList[i+1:]...)
 
 	return nil
 }
@@ -119,7 +121,7 @@ var productList = []*Product{
 	},
 	&Product{
 		ID:          2,
-		Name:        "Esspresso",
+		Name:        "Espresso",
 		Description: "Short and strong coffee without milk",
 		Price:       1.99,
 		SKU:         "fjd34",
