@@ -15,7 +15,7 @@ type ValidationError struct {
 
 func (v ValidationError) Error() string {
 	return fmt.Sprintf(
-		"Key: '%s' Error: Field validataion for '%s' failed on the '%s' tag",
+		"Key: '%s' Error: Field validation for '%s' failed on the '%s' tag",
 		v.Namespace(),
 		v.Field(),
 		v.Tag(),
@@ -74,6 +74,7 @@ func (v *Validation) Validate(i interface{}) ValidationErrors {
 
 	var returnErrs []ValidationError
 	for _, err := range errs {
+		// cast the FieldError into our ValidationError and append to the slice
 		ve := ValidationError{err.(validator.FieldError)}
 		returnErrs = append(returnErrs, ve)
 	}
@@ -83,6 +84,7 @@ func (v *Validation) Validate(i interface{}) ValidationErrors {
 
 // validateSKU
 func validateSKU(fl validator.FieldLevel) bool {
+	// SKU must be in the format abc-abc-abc
 	re := regexp.MustCompile(`[a-z]+-[a-z]+-[a-z]+`)
 	sku := re.FindAllString(fl.Field().String(), -1)
 

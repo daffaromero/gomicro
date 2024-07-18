@@ -69,7 +69,11 @@ func main() {
 	sig := <-c
 	log.Println("Got signal:", sig)
 
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	ctx, err := context.WithTimeout(context.Background(), 30*time.Second)
+	if err != nil {
+		l.Println("Error shutting down server:", err)
+		os.Exit(1)
+	}
 
 	s.Shutdown(ctx)
 }
