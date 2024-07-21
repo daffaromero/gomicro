@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package currency;
+
+option go_package = "./currency";
+
+// Service definition for currency conversion.
+service Currency {
+  // RPC method to get the exchange rate.
+  rpc GetRate(RateRequest) returns (RateResponse);
+}
+
+// Message definition for the request to get an exchange rate.
+message RateRequest {
+  // Base is the base currency code for the rate.
+  string base = 1 [json_name = "base"];
+  // Destination is the destination currency code for the rate.
+  string destination = 2 [json_name = "destination"];
+}
+
+// Message definition for the response that includes the exchange rate.
+message RateResponse {
+  // The exchange rate from base to destination currency.
+  float rate = 1;
+}
