@@ -10,6 +10,7 @@ import (
 
 	"github.com/daffaromero/gomicro/product-images/files"
 	"github.com/daffaromero/gomicro/product-images/handlers"
+	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	hclog "github.com/hashicorp/go-hclog"
 	"github.com/nicholasjackson/env"
@@ -34,21 +35,26 @@ func main() {
 	}
 
 	fh := handlers.NewFiles(stor, l)
+	mw := handlers.GzipHandler{}
 
 	sm := mux.NewRouter()
 
+	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
+
 	ph := sm.Methods(http.MethodPost).Subrouter()
-	ph.HandleFunc("/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fh.ServeHTTP)
+	ph.HandleFunc("/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}", fh.UploadREST)
+	ph.HandleFunc("/", fh.UploadMultipart)
 
 	gh := sm.Methods(http.MethodGet).Subrouter()
 	gh.Handle(
 		"/images/{id:[0-9]+}/{filename:[a-zA-Z]+\\.[a-z]{3}}",
 		http.StripPrefix("/images/", http.FileServer(http.Dir(*basePath))),
 	)
+	gh.Use(mw.GzipMiddleware)
 
 	s := http.Server{
 		Addr:         "localhost:8087",
-		Handler:      sm,
+		Handler:      ch(sm),
 		ErrorLog:     sl,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
