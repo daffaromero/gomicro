@@ -1,8 +1,9 @@
 package handlers
 
 import (
-	"gomicro/data"
 	"net/http"
+
+	"github.com/daffaromero/gomicro/product-api/data"
 )
 
 // swagger:route GET /products products listProducts

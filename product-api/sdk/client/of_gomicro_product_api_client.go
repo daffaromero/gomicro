@@ -10,7 +10,7 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
-	"gomicro/sdk/client/products"
+	"github.com/daffaromero/gomicro/product-api/sdk/client/products"
 )
 
 // Default of gomicro product API HTTP client.

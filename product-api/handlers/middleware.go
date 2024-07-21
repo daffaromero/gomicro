@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"gomicro/data"
+	"github.com/daffaromero/gomicro/product-api/data"
 )
 
 // MiddlewareValidateProduct validates the product in the request and calls next if ok

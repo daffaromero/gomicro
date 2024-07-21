@@ -2,14 +2,15 @@ package main
 
 import (
 	"context"
-	"gomicro/data"
-	"gomicro/handlers"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/daffaromero/gomicro/product-api/data"
+	"github.com/daffaromero/gomicro/product-api/handlers"
 
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"

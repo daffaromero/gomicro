@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"fmt"
-	"gomicro/data"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/daffaromero/gomicro/product-api/data"
 
 	"github.com/gorilla/mux"
 )

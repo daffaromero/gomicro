@@ -15,7 +15,7 @@
 // swagger:meta
 package handlers
 
-import "gomicro/data"
+import "github.com/daffaromero/gomicro/product-api/data"
 
 //
 // NOTE: Types defined here are purely for documentation purposes

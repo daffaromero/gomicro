@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"gomicro/sdk/client"
-	"gomicro/sdk/client/products"
 	"testing"
+
+	"github.com/daffaromero/gomicro/product-api/sdk/client"
+	"github.com/daffaromero/gomicro/product-api/sdk/client/products"
 )
 
 func TestOurClient(t *testing.T) {
@@ -13,7 +14,6 @@ func TestOurClient(t *testing.T) {
 
 	params := products.NewListProductsParams()
 	prod, err := c.Products.ListProducts(params)
-
 	if err != nil {
 		t.Fatal(err)
 	}
