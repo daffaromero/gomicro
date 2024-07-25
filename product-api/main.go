@@ -11,6 +11,10 @@ import (
 
 	"github.com/daffaromero/gomicro/product-api/data"
 	"github.com/daffaromero/gomicro/product-api/handlers"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+
+	protos "github.com/daffaromero/gomicro/currency/protos/currency"
 
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
@@ -21,7 +25,16 @@ func main() {
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
 	v := data.NewValidation()
 
-	ph := handlers.NewProducts(l, v)
+	conn, err := grpc.NewClient("localhost:9092", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		panic(err)
+	}
+
+	defer conn.Close()
+
+	cc := protos.NewCurrencyClient(conn)
+
+	ph := handlers.NewProducts(l, v, cc)
 
 	sm := mux.NewRouter()
 
@@ -73,11 +86,11 @@ func main() {
 	sig := <-c
 	log.Println("Got signal:", sig)
 
-	ctx, err := context.WithTimeout(context.Background(), 30*time.Second)
-	if err != nil {
-		l.Println("Error shutting down server:", err)
-		os.Exit(1)
-	}
+	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	// if err != nil {
+	// 	l.Println("Error shutting down server:", err)
+	// 	os.Exit(1)
+	// }
 
 	s.Shutdown(ctx)
 }
