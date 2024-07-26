@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 
+	protos "github.com/daffaromero/gomicro/currency/protos/currency"
 	"github.com/daffaromero/gomicro/product-api/data"
 )
 
@@ -63,6 +65,23 @@ func (p *Products) ListSingle(w http.ResponseWriter, r *http.Request) {
 		data.ToJSON(&GenericError{Message: "Product not found in database"}, w)
 		return
 	}
+
+	// get exchange rate
+	rr := &protos.RateRequest{
+		Base:        string(protos.Currencies(protos.Currencies_value["CURRENCIES_EUR_UNSPECIFIED"])),
+		Destination: string(protos.Currencies(protos.Currencies_value["CURRENCIES_GBP_UNSPECIFIED"])),
+	}
+
+	resp, err := p.cc.GetRate(context.Background(), rr)
+	if err != nil {
+		p.l.Println("[Error] error getting new rate", err)
+		data.ToJSON(&GenericError{Message: err.Error()}, w)
+		return
+	}
+
+	p.l.Printf("Rate %#v", resp.Rate)
+
+	prod.Price = prod.Price * resp.Rate
 
 	err = data.ToJSON(prod, w)
 	if err != nil {
